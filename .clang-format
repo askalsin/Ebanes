@@ -1,0 +1,5 @@
+BasedOnStyle: Google
+AccessModifierOffset: -4
+BreakBeforeBraces: WebKit
+AllowShortFunctionsOnASingleLine: Empty
+IndentWidth: 4
