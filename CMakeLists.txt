@@ -4,7 +4,14 @@ set(PROJECT_NAME Ebanes)
 
 project(${PROJECT_NAME})
 
-add_executable(${PROJECT_NAME} src/main.cpp)
+set(CMAKE_CXX_STANDARD 20)
+
+add_executable(
+    ${PROJECT_NAME}
+    src/main.cpp
+    src/Renderer/ShaderProgram.cpp
+    src/Renderer/ShaderProgram.hpp
+)
 
 set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
