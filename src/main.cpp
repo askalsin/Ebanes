@@ -1,17 +1,19 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <glm/vec2.hpp>
 
 #include <iostream>
 #include <string>
 
+#include "glm/ext/vector_int2.hpp"
 #include "renderer/shader_program.hpp"
 #include "renderer/texture_2D.hpp"
 #include "resources/resource_manager.hpp"
 
 // clang-format off
 GLfloat point[] = {
-    0.0f, 0.5f, 0.0f,
-    0.5f, -0.5f, 0.0f,
+     0.0f,  0.5f, 0.0f,
+     0.5f, -0.5f, 0.0f,
     -0.5f, -0.5f, 0.0f
 };
 
@@ -28,14 +30,14 @@ GLfloat tex_coord[] = {
 };
 // clang-format on
 
-int window_size_X = 640;
-int window_size_Y = 480;
+
+glm::ivec2 window_size(640, 480);
 
 void glfwWindowSizeCallback(GLFWwindow* window, int width, int height)
 {
-    window_size_X = width;
-    window_size_Y = height;
-    glViewport(0, 0, window_size_X, window_size_Y);
+    window_size.x = width;
+    window_size.y = height;
+    glViewport(0, 0, window_size.x, window_size.y);
 }
 
 void glfwKeyCallback(GLFWwindow* window, int key, int scancode, int action,
@@ -61,7 +63,7 @@ int main(int argc, char** argv)
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     /* Create a windowed mode window and its OpenGL context */
-    window = glfwCreateWindow(window_size_X, window_size_Y, "Ebanes", nullptr,
+    window = glfwCreateWindow(window_size.x, window_size.y, "Ebanes", nullptr,
                               nullptr);
     if (!window) {
         std::cout << "Failed to create a window!\n";
@@ -98,7 +100,7 @@ int main(int argc, char** argv)
         }
 
         auto tex = res_manager.load_texture("default_texture",
-                                 "resources/textures/map_16x16.png");
+                                            "resources/textures/map_16x16.png");
 
         GLuint points_vbo = 0;
         glGenBuffers(1, &points_vbo);
@@ -113,7 +115,8 @@ int main(int argc, char** argv)
         GLuint tex_coord_vbo = 0;
         glGenBuffers(1, &tex_coord_vbo);
         glBindBuffer(GL_ARRAY_BUFFER, tex_coord_vbo);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(tex_coord), tex_coord, GL_STATIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(tex_coord), tex_coord,
+                     GL_STATIC_DRAW);
 
         GLuint vao = 0;
         glGenVertexArrays(1, &vao);
