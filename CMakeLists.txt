@@ -4,14 +4,16 @@ set(PROJECT_NAME Ebanes)
 
 project(${PROJECT_NAME})
 
-set(CMAKE_CXX_STANDARD 20)
-
 add_executable(
     ${PROJECT_NAME}
     src/main.cpp
-    src/Renderer/ShaderProgram.cpp
-    src/Renderer/ShaderProgram.hpp
+    src/renderer/shader_program.cpp
+    src/renderer/shader_program.hpp
+    src/resources/resource_manager.cpp
+    src/resources/resource_manager.hpp
 )
+
+target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_20)
 
 set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
@@ -23,3 +25,9 @@ target_link_libraries(${PROJECT_NAME} glfw)
 
 add_subdirectory(external/glad)
 target_link_libraries(${PROJECT_NAME} glad)
+
+set_target_properties(${PACKAGES_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/)
+
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+                   COMMAND ${CMAKE_COMMAND} -E copy_directory
+                   ${CMAKE_SOURCE_DIR}/resources $<TARGET_FILE_DIR:${PROJECT_NAME}>/resources)
