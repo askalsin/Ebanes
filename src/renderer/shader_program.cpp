@@ -90,4 +90,9 @@ void shader_program::use() const
     glUseProgram(m_ID);
 }
 
+void shader_program::set_int(const std::string& name, const GLint value)
+{
+    glUniform1i(glGetUniformLocation(m_ID, name.c_str()), value);
+}
+
 }  // namespace renderer

@@ -9,8 +9,11 @@ add_executable(
     src/main.cpp
     src/renderer/shader_program.cpp
     src/renderer/shader_program.hpp
+    src/renderer/texture_2D.cpp
+    src/renderer/texture_2D.hpp
     src/resources/resource_manager.cpp
     src/resources/resource_manager.hpp
+    src/resources/stb_image.h
 )
 
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_20)

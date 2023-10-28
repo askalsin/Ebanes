@@ -7,6 +7,11 @@
 
 #include "resource_manager.hpp"
 #include "../renderer/shader_program.hpp"
+#include "../renderer/texture_2D.hpp"
+
+#define STB_IMAGE_IMPLEMENTATION
+#define STBI_ONLY_PNG
+#include "stb_image.h"
 
 resource_manager::resource_manager(const std::string& executable_path)
 {
@@ -79,6 +84,51 @@ std::shared_ptr<renderer::shader_program> resource_manager::get_shader(
     }
 
     std::cerr << "ERROR: Can't fing the shader program: " << shader_name
+              << "\n";
+
+    return nullptr;
+}
+
+std::shared_ptr<renderer::texture_2D> resource_manager::load_texture(
+    const std::string& texture_name, const std::string& texture_path)
+{
+    int chanels = 0;
+    int width = 0;
+    int height = 0;
+
+    stbi_set_flip_vertically_on_load(true);
+
+    unsigned char* pixels =
+        stbi_load(std::string(m_path + "/" + texture_path).c_str(), &width,
+                  &height, &chanels, 0);
+
+    if (!pixels) {
+        std::cerr << "ERROR: Can't load image: " << texture_path << "\n";
+        return nullptr;
+    }
+
+    std::shared_ptr<renderer::texture_2D> new_texture =
+        m_textures
+            .emplace(texture_name, std::make_shared<renderer::texture_2D>(
+                                       width, height, pixels, chanels,
+                                       GL_NEAREST, GL_CLAMP_TO_EDGE))
+            .first->second;
+
+    stbi_image_free(pixels);
+
+    return new_texture;
+}
+
+std::shared_ptr<renderer::texture_2D> resource_manager::get_texture(
+    const std::string& texture_name)
+{
+    texture_2D_map::const_iterator it = m_textures.find(texture_name);
+
+    if (it != m_textures.end()) {
+        return it->second;
+    }
+
+    std::cerr << "ERROR: Can't fing the shader program: " << texture_name
               << "\n";
 
     return nullptr;

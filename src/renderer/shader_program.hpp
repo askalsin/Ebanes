@@ -34,5 +34,7 @@ public:
     }
 
     void use() const;
+
+    void set_int(const std::string& name, const GLint value);
 };
 }  // namespace renderer
