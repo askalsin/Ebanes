@@ -1,4 +1,6 @@
 #include "shader_program.hpp"
+
+#include <glm/gtc/type_ptr.hpp>
 #include <iostream>
 
 namespace renderer {
@@ -93,6 +95,12 @@ void shader_program::use() const
 void shader_program::set_int(const std::string& name, const GLint value)
 {
     glUniform1i(glGetUniformLocation(m_ID, name.c_str()), value);
+}
+
+void shader_program::set_matrix_4(const std::string& name, glm::mat4& matrix)
+{
+    glUniformMatrix4fv(glGetUniformLocation(m_ID, name.c_str()), 1, GL_FALSE,
+                       glm::value_ptr(matrix));
 }
 
 }  // namespace renderer

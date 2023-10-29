@@ -1,20 +1,21 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <glm/vec2.hpp>
+#include <glm/mat4x4.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 #include <iostream>
 #include <string>
 
-#include "glm/ext/vector_int2.hpp"
 #include "renderer/shader_program.hpp"
 #include "renderer/texture_2D.hpp"
 #include "resources/resource_manager.hpp"
 
 // clang-format off
 GLfloat point[] = {
-     0.0f,  0.5f, 0.0f,
-     0.5f, -0.5f, 0.0f,
-    -0.5f, -0.5f, 0.0f
+     0.0f,  50.f, 0.0f,
+     50.f, -50.f, 0.0f,
+    -50.f, -50.f, 0.0f
 };
 
 GLfloat colors[] = {
@@ -29,7 +30,6 @@ GLfloat tex_coord[] = {
     0.0f, 0.0f,
 };
 // clang-format on
-
 
 glm::ivec2 window_size(640, 480);
 
@@ -137,6 +137,20 @@ int main(int argc, char** argv)
         default_shader_program->use();
         default_shader_program->set_int("tex", 0);
 
+        glm::mat4 model_matrix1 = glm::mat4(1.0f);
+        model_matrix1 =
+            glm::translate(model_matrix1, glm::vec3(100.0f, 50.0f, 0.0f));
+
+        glm::mat4 model_matrix2 = glm::mat4(1.0f);
+        model_matrix2 =
+            glm::translate(model_matrix2, glm::vec3(590.0f, 50.0f, 0.0f));
+
+        glm::mat4 projection_matrix =
+            glm::ortho(0.0f, static_cast<float>(window_size.x), 0.0f,
+                       static_cast<float>(window_size.y), -100.0f, 100.f);
+
+        default_shader_program->set_matrix_4("projection_mat", projection_matrix);
+
         /* Loop until the user closes the window */
         while (!glfwWindowShouldClose(window)) {
             /* Render here */
@@ -148,7 +162,12 @@ int main(int argc, char** argv)
 
             tex->bind();
 
+            default_shader_program->set_matrix_4("model_mat", model_matrix1);
             glDrawArrays(GL_TRIANGLES, 0, 3);
+
+            default_shader_program->set_matrix_4("model_mat", model_matrix2);
+            glDrawArrays(GL_TRIANGLES, 0, 3);
+
 
             /* Swap front and back buffers */
             glfwSwapBuffers(window);

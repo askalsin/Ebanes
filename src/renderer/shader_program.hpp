@@ -1,6 +1,7 @@
 #pragma once
 
 #include <glad/glad.h>
+#include <glm/mat4x4.hpp>
 
 #include <string>
 
@@ -36,5 +37,7 @@ public:
     void use() const;
 
     void set_int(const std::string& name, const GLint value);
+
+    void set_matrix_4(const std::string& name, glm::mat4& matrix);
 };
 }  // namespace renderer
