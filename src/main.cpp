@@ -9,6 +9,7 @@
 
 #include "renderer/shader_program.hpp"
 #include "renderer/texture_2D.hpp"
+#include "renderer/sprite.hpp"
 #include "resources/resource_manager.hpp"
 
 // clang-format off
@@ -95,12 +96,27 @@ int main(int argc, char** argv)
             "resources/shaders/fragment.txt");
 
         if (!default_shader_program) {
-            std::cerr << "ERROR: Can't create chader program: default_shader\n";
+            std::cerr << "ERROR: Can't create shader program: default_shader\n";
+            return -1;
+        }
+
+        auto sprite_shader_program = res_manager.load_shaders(
+            "sprite_shader", "resources/shaders/vertex_sprite.txt",
+            "resources/shaders/fragment_sprite.txt");
+
+        if (!sprite_shader_program) {
+            std::cerr << "ERROR: Can't create sprite shader program: "
+                      << "sprite_shader\n";
             return -1;
         }
 
         auto tex = res_manager.load_texture("default_texture",
                                             "resources/textures/map_16x16.png");
+
+        auto sprite_ptr = res_manager.load_sprite(
+            "new_sprite", "default_texture", "sprite_shader", 50, 100);
+
+        sprite_ptr->set_position(glm::vec2(300, 100));
 
         GLuint points_vbo = 0;
         glGenBuffers(1, &points_vbo);
@@ -149,7 +165,14 @@ int main(int argc, char** argv)
             glm::ortho(0.0f, static_cast<float>(window_size.x), 0.0f,
                        static_cast<float>(window_size.y), -100.0f, 100.f);
 
-        default_shader_program->set_matrix_4("projection_mat", projection_matrix);
+        default_shader_program->set_matrix_4("projection_mat",
+                                             projection_matrix);
+
+        sprite_shader_program->use();
+        sprite_shader_program->set_int("tex", 0);
+
+        sprite_shader_program->set_matrix_4("projection_mat",
+                                            projection_matrix);
 
         /* Loop until the user closes the window */
         while (!glfwWindowShouldClose(window)) {
@@ -168,6 +191,7 @@ int main(int argc, char** argv)
             default_shader_program->set_matrix_4("model_mat", model_matrix2);
             glDrawArrays(GL_TRIANGLES, 0, 3);
 
+            sprite_ptr->render();
 
             /* Swap front and back buffers */
             glfwSwapBuffers(window);

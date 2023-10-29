@@ -8,6 +8,7 @@
 #include "resource_manager.hpp"
 #include "../renderer/shader_program.hpp"
 #include "../renderer/texture_2D.hpp"
+#include "../renderer/sprite.hpp"
 
 #define STB_IMAGE_IMPLEMENTATION
 #define STBI_ONLY_PNG
@@ -128,8 +129,49 @@ std::shared_ptr<renderer::texture_2D> resource_manager::get_texture(
         return it->second;
     }
 
-    std::cerr << "ERROR: Can't fing the shader program: " << texture_name
-              << "\n";
+    std::cerr << "ERROR: Can't fing the texture: " << texture_name << "\n";
+
+    return nullptr;
+}
+
+std::shared_ptr<renderer::sprite> resource_manager::load_sprite(
+    const std::string& sprite_name, const std::string& texture_name,
+    const std::string& shader_name, const unsigned int sprite_widht,
+    const unsigned int sprite_height)
+{
+    auto texture_ptr = get_texture(texture_name);
+    if (!texture_ptr) {
+        std::cerr << "ERROR: Can't fing the texture: " << texture_name
+                  << " for the sprite: " << sprite_name << "\n";
+    }
+
+    auto shader_ptr = get_shader(shader_name);
+    if (!shader_ptr) {
+        std::cerr << "ERROR: Can't fing the shader: " << shader_name
+                  << " for the sprite: " << sprite_name << "\n";
+    }
+
+    auto sprite_ptr =
+        m_sprites
+            .emplace(texture_name,
+                     std::make_shared<renderer::sprite>(
+                         texture_ptr, shader_ptr, glm::vec2(0.0f, 0.0f),
+                         glm::vec2(sprite_widht, sprite_height)))
+            .first->second;
+    
+    return sprite_ptr;
+}
+
+std::shared_ptr<renderer::sprite> resource_manager::get_sprite(
+    const std::string& sprite_name)
+{
+    sprite_map::const_iterator it = m_sprites.find(sprite_name);
+
+    if (it != m_sprites.end()) {
+        return it->second;
+    }
+
+    std::cerr << "ERROR: Can't fing the sprite: " << sprite_name << "\n";
 
     return nullptr;
 }

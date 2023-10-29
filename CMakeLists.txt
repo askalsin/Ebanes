@@ -11,6 +11,8 @@ add_executable(
     src/renderer/shader_program.hpp
     src/renderer/texture_2D.cpp
     src/renderer/texture_2D.hpp
+    src/renderer/sprite.cpp
+    src/renderer/sprite.hpp
     src/resources/resource_manager.cpp
     src/resources/resource_manager.hpp
     src/resources/stb_image.h
